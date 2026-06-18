@@ -118,6 +118,34 @@
     \vspace{0.2cm}
 }
 
+\newboolean{isFirstContactItem}
+% #1: Name, #2: Location URL, #3: Location Name, #4: Email, #5: Phone, #6: LinkedIn URL, #7: LinkedIn Name, #8: GitHub URL, #9: GitHub Name
+\newcommand{\cvHeader}[9]{
+    \setboolean{isFirstContactItem}{true}%
+    \makeheader{#1}{%
+        \ifthenelse{\equal{#3}{}}{}{%
+            \ifthenelse{\boolean{isFirstContactItem}}{\setboolean{isFirstContactItem}{false}}{\contactSeparator}%
+            \contactItem{#2}{\atsIcon{Location: }{\faMapMarker*}}{#3}%
+        }%
+        \ifthenelse{\equal{#4}{}}{}{%
+            \ifthenelse{\boolean{isFirstContactItem}}{\setboolean{isFirstContactItem}{false}}{\contactSeparator}%
+            \contactItem{mailto:#4}{\atsIcon{Email: }{\faEnvelope[regular]}}{#4}%
+        }%
+        \ifthenelse{\equal{#5}{}}{}{%
+            \ifthenelse{\boolean{isFirstContactItem}}{\setboolean{isFirstContactItem}{false}}{\contactSeparator}%
+            \contactItem{tel:#5}{\atsIcon{Phone: }{\faPhone*}}{#5}%
+        }%
+        \ifthenelse{\equal{#7}{}}{}{%
+            \ifthenelse{\boolean{isFirstContactItem}}{\setboolean{isFirstContactItem}{false}}{\contactSeparator}%
+            \contactItem{#6}{\atsIcon{LinkedIn: }{\faLinkedinIn}}{#7}%
+        }%
+        \ifthenelse{\equal{#9}{}}{}{%
+            \ifthenelse{\boolean{isFirstContactItem}}{\setboolean{isFirstContactItem}{false}}{\contactSeparator}%
+            \contactItem{#8}{\atsIcon{GitHub: }{\faGithub}}{#9}%
+        }%
+    }%
+}
+
 % #1: Summary Text
 \newcommand{\cvSummary}[1]{
     \begin{onecolentry}
@@ -194,7 +222,7 @@
 
 % #1: Cert Name, #2: Issuer, #3: Date, #4: Link Text, #5: Link URL
 \newcommand{\cvCert}[5]{
-    \begin{twocolentry}{\textit{#3}}
+    \begin{twocolentry}{\textit{Issued #3}}
         \textbf{#1}
     \end{twocolentry}
     \begin{twocolentry}{\textit{\href{#5}{#4}}}
