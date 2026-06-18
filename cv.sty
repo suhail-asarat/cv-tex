@@ -4,7 +4,8 @@
 % --- Core Packages ---
 \RequirePackage[
     ignoreheadfoot, % Set margins without considering header and footer
-    top=0.5in, bottom=0.5in, left=0.5in, right=0.5in
+    % top=0.5in, bottom=0.5in, left=0.5in, right=0.5in
+    top=1in, bottom=1in, left=1in, right=1in
 ]{geometry}
 \RequirePackage{titlesec} % For customizing section titles
 \RequirePackage{tabularx} % For tables
@@ -12,6 +13,7 @@
 \RequirePackage[dvipsnames]{xcolor} % For text colors
 \RequirePackage{enumitem} % For list customization
 \RequirePackage{fontawesome5} % For icons
+\RequirePackage{accsupp} % For ATS text replacement
 \RequirePackage{amsmath}
 \RequirePackage{calc}
 \RequirePackage{changepage} % For single column entries
@@ -39,7 +41,7 @@
 
 % Custom link command with an external arrow icon
 \let\hrefWithoutArrow\href
-\renewcommand{\href}[2]{\hrefWithoutArrow{#1}{\ifthenelse{\equal{#2}{}}{ }{#2 }\raisebox{.15ex}{\footnotesize \faExternalLink*}}}
+% \renewcommand{\href}[2]{\hrefWithoutArrow{#1}{\ifthenelse{\equal{#2}{}}{ }{#2 }\raisebox{.15ex}{\footnotesize \faExternalLink*}}}
 
 % --- Global Formatting ---
 \pagestyle{empty} % Remove page numbers
@@ -79,6 +81,13 @@
     \endonecolentry
 }
 
+% --- ATS-Friendly Icon Wrapper ---
+\newcommand{\atsIcon}[2]{%
+    \BeginAccSupp{method=pdfstringdef,unicode,ActualText=#1}%
+    #2%
+    \EndAccSupp{}%
+}
+
 % ==============================================================================
 % SEMANTIC DATA COMMANDS (To be used in cv.tex)
 % ==============================================================================
@@ -87,6 +96,11 @@
 \newcommand{\contactItem}[3]{%
     \mbox{\hrefWithoutArrow{#1}{\color{black}{\footnotesize #2}\hspace*{0.10cm}#3}}%
 }
+
+% Header Variables - with hidden ATS labels
+% \newcommand{\contactItem}[4]{%
+%     \mbox{\hrefWithoutArrow{#1}{\color{black}{\footnotesize #2}\hspace*{0.10cm}#3\phantom{\footnotesize#4}}}%
+% }
 
 \newsavebox\ANDbox
 \sbox\ANDbox{}
@@ -112,37 +126,7 @@
     \vspace{0.2 cm}
 }
 
-% #1: Title, #2: Tech Stack, #3: Date, #4: Subtitle/Type, #5: Bullet Points
-\newcommand{\cvExperience}[5]{
-    \begin{twocolentry}{\textit{#4}}
-        \textbf{#1}
-    \end{twocolentry}
-    \begin{twocolentry}{\textit{#3}}
-        \textit{#2}
-    \end{twocolentry}
-    \vspace{0.10 cm}
-    \begin{onecolentry}
-        \begin{highlights} #5 \end{highlights}
-    \end{onecolentry}
-    \vspace{0.2 cm}
-}
-
-% #1: Title, #2: Tech Stack, #3: Date, #4: Subtitle/Type, #5: Bullet Points
-\newcommand{\cvProject}[5]{
-    \begin{twocolentry}{\textit{#4}}
-        \textbf{#1}
-    \end{twocolentry}
-    \begin{twocolentry}{\textit{#3}}
-        \textit{#2}
-    \end{twocolentry}
-    \vspace{0.10 cm}
-    \begin{onecolentry}
-        \begin{highlights} #5 \end{highlights}
-    \end{onecolentry}
-    \vspace{0.2 cm}
-}
-
-% #1: University, #2: Degree, #3: Date, #4: Location, #5: Bullet Points
+% #1: Degree, #2: University, #3: Date, #4: Location, #5: Bullet Points
 \newcommand{\cvEducation}[5]{
     \begin{twocolentry}{\textit{#3}}
         \textbf{#1}
@@ -165,36 +149,83 @@
     \vspace{0.05 cm}
 }
 
-% #1: Cert Name, #2: Date, #3: Link URL, #4: Link Text
-\newcommand{\cvCert}[4]{
-    \begin{twocolentry}{\textit{Issued #2}}
+% #1: Title, #2: Tech Stack, #3: Date, #4: Subtitle/Type, #5: Bullet Points
+\newcommand{\cvProject}[5]{
+    \begin{twocolentry}{\textit{#3}}
         \textbf{#1}
     \end{twocolentry}
+    \begin{twocolentry}{\textit{#4}}
+        \textit{#2}
+    \end{twocolentry}
     \vspace{0.10 cm}
-    \begin{onecolentry} \href{#3}{#4} \end{onecolentry}
+    \begin{onecolentry}
+        \begin{highlights} #5 \end{highlights}
+    \end{onecolentry}
     \vspace{0.2 cm}
 }
 
-% #1: Publication Title, #2: Authors, #3: Venue, #4: Date, #5: URL, #6: URL Text
-\newcommand{\cvPublication}[6]{
+% #1: Title, #2: Organization, #3: Date, #4: Location, #5: Bullet Points
+\newcommand{\cvExperience}[5]{
+    \begin{twocolentry}{\textit{#3}}
+        \textbf{#1}
+    \end{twocolentry}
     \begin{twocolentry}{\textit{#4}}
+        \textit{#2}
+    \end{twocolentry}
+    \vspace{0.10 cm}
+    \begin{onecolentry}
+        \begin{highlights} #5 \end{highlights}
+    \end{onecolentry}
+    \vspace{0.2 cm}
+}
+
+% #1: Title, #2: Authors, #3: Venue, #4: Date, #5: URL Text, #6: URL
+\newcommand{\cvPublication}[6]{
+    \begin{twocolentry}{\textit{Published #4}}
         \textbf{#1}
     \end{twocolentry}
     \vspace{0.10 cm}
     \begin{onecolentry}
         #2 \\
-        \textit{#3} \ifthenelse{\equal{#5}{}}{}{ | \href{#5}{#6}}
+        \textit{#3} \ifthenelse{\equal{#6}{}}{}{ | \href{#6}{#5}}
     \end{onecolentry}
     \vspace{0.2 cm}
 }
 
-% #1: Name, #2: Position, #3: Department, #4: Organization, #5: Contact Info
-\newcommand{\cvReference}[5]{
+% #1: Cert Name, #2: Issuer, #3: Date, #4: Link Text, #5: Link URL
+\newcommand{\cvCert}[5]{
+    \begin{twocolentry}{\textit{#3}}
+        \textbf{#1}
+    \end{twocolentry}
+    \begin{twocolentry}{\textit{\href{#5}{#4}}}
+        \textit{#2}
+    \end{twocolentry}
+    \vspace{0.2 cm}
+}
+
+% #1: Position, #2: Date, #3: Event/Group, #4: Organization, #5: Bullet Points
+\newcommand{\cvExtracurricularActivity}[5]{
+    \begin{twocolentry}{\textit{#2}}
+        \textbf{#1}
+    \end{twocolentry}
+    \begin{twocolentry}{\textit{#4}}
+        \textit{#3}
+    \end{twocolentry}
+    \vspace{0.10 cm}
+    \begin{onecolentry}
+        \begin{highlights} #5 \end{highlights}
+    \end{onecolentry}
+    \vspace{0.2 cm}
+}
+
+% #1: Name, #2: Position, #3: Department, #4: Organization, #5: Email, #6: Phone
+\newcommand{\cvReference}[6]{
     \begin{onecolentry}
         \textbf{#1} \\
         \textit{#2} \\
         \ifthenelse{\equal{#3}{}}{}{#3 \\}#4 \\
-        #5
+        \ifthenelse{\equal{#5}{}}{}{\href{mailto:#5}{#5}\ifthenelse{\equal{#6}{}}{}{\\}}%
+        \ifthenelse{\equal{#6}{}}{}{#6}
     \end{onecolentry}
     \vspace{0.2 cm}
 }
